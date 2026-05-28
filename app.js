@@ -13,12 +13,14 @@ const usersRouter = require('./routes/users');
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
 const blogsRouter = require('./routes/blogs');
+const recentBlogsRouter = require('./routes/recentBlogs');
 
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,6 +39,7 @@ app.use('/users', usersRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/blogs', blogsRouter);
+app.use('/recentBlogs', blogsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

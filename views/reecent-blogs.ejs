@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Blog | Blogs</title>
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <link rel="stylesheet" href="./stylesheets/auth.css">
+    <link rel="stylesheet" href="./stylesheets/header.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet">
+</head>
+<body>
+<%- include('partials/header', {email}) %>
+
+<h1> THE BLOG </h1>
+
+<section class ="blog">
+    <h2>Recent blog posts</h2>
+    <div class="blog-posts container">
+        <div class="blog-post">
+            <img src="./images/blog-post-img.jpg" alt="">
+            <p>Olivia Rhye • 1 Jan 2023</p>
+            <h4 class =title>UX review presentations</h4>
+            <p class="description">How do you create compelling presentations that wow your colleagues and impress your managers?</p>
+        </div>
+    </div>
+
+    <div class="blogs">
+        <div class="monitor">
+            <img src="./images/blog-post-img.jpg" alt="">
+            <p>Phoenix Baker • 1 Jan 2023</p>
+            <h4 class =title>Migrating to Linear 101</h4>
+            <p class="description">Linear helps streamline software projects, sprints, tasks, and bug tracking. Here’s how to get...</p>
+        </div>
+    </div>
+
+    <div class="monitor">
+            <img src="./images/blog-post-img.jpg" alt="">
+            <p>Lana Steiner • 1 Jan 2023</p>
+            <h4 class =title>Building your API Stack</h4>
+            <p class="description">The rise of RESTful APIs has been met by a rise in tools for creating, testing, and manag....</p>
+        </div>
+    </div>
+
+    <div class="blog-grid">
+        % blogs.forEach((blog, index) => { %>
+
+        <div class="blog-card">
+        <% if (index === 0 ) { %>
+            <img class="first"src="./images/blog1.pgn" alt="chair image">
+        <% } else if (index ===1){ %>
+            <img class="second"src="./images/blog2.png" alt="meeting image">
+        <% } else if(index === 2) { %>
+         <img class="third"src="./images/blog3.png" alt="computer image">
+    </div>
+        <% } %>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+.blog-grid{
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+}
+.first{
+    display: flex;
+    gap:32px;
+    width: 592px;
+    height: 228px;
+
+}
+.second .third{
+    gap:24px;
+    display: flex;
+    width:592px;
+    height: 200px;
+}
+
+.author .date{
+    width: 592px;
+    height: 246px;
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+    color: rgba(26, 26, 26, 1);
+}
+.reviews{
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(102, 112, 133, 1);
+}
+.description{
+    width: 592px;
+    height: 120px;
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(102, 112, 133, 1);
+}
+.tags{
+    width: 67px;
+    height: 24px;
+    border-radius: 16px;
+}
+
+.recent-posts {
+    padding: 60px 80px;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.post-card img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+@media (max-width: 1024px) {
+    .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-posts {
+        padding: 20px;
+    }
+}
