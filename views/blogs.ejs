@@ -5,17 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Blog | Blogs</title>
     <link rel="stylesheet" href="./stylesheets/style.css">
-    <link rel="stylesheet" href="./stylesheets/auth.css">
+    <link rel="stylesheet" href="./stylesheets/blogs.css">
     <link rel="stylesheet" href="./stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap" rel="stylesheet">
 </head>
 <body>
-<%- include('partials/header', {email}) %>
+<%- include('partials/header') %>
 
-<h1> This Is blogs page </h1>
+<div class="container form-container">
+    <h1 class="title">THE BLOG</h1>
+</div>
+
+<div class="container form-container recent-section">
+    <p class="section-title">Recent blog posts</p>
+    <div class="recent-blog-posts">
+        <div class="main-recent-blog-post">
+            <figure class="main-image">
+                <img class="full-width-figure" src="images/tabletop.jpg">
+            </figure>
+            <div class="details">
+                <p class="details-header-title">
+                    <%= blogs[0].header %>
+                </p>
+                <p class="details-title-big">
+                    <%= blogs[0].title %>
+                </p>
+                <p class="details-description">
+                    <%= blogs[0].description %>
+                </p>
+                <div class="blog-tags">
+                    <p class="tag tag-purple">Design</p>
+                    <p class="tag tag-blue">Research</p>
+                    <p class="tag tag-pink">Presentation</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-blog-post-top">
+            <figure>
+                <img class="full-height-img" src="images/recent-r-top.jpg">
+            </figure>
+            <div class="details">
+                <p class="details-header-title">
+                    <%= blogs[1].header %>
+                </p>
+                <p class="details-title-small">
+                    <%= blogs[1].title %>
+                </p>
+                <p class="details-description">
+                    <%= blogs[1].description %>
+                </p>
+                <div class="blog-tags">
+                    <p class="tag tag-blue">Design</p>
+                    <p class="tag tag-pink">Research</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-blog-post-bottom">
+            <figure>
+                <img class="full-height-img" src="images/recent-r-bottom.jpg">
+            </figure>
+            <div class="details">
+                <p class="details-header-title">
+                    <%= blogs[2].header %>
+                </p>
+                <p class="details-title-small">
+                    <%= blogs[2].title %>
+                </p>
+                <p class="details-description">
+                    <%= blogs[2].description %>
+                </p>
+                <div class="blog-tags">
+                    <p class="tag tag-green">Design</p>
+                    <p class="tag tag-pink">Research</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wide-recent-blog-post">
+            <figure>
+                <img class="full-height-img-2" src="images/recent-bottom.jpg">
+            </figure>
+            <div class="details">
+                <p class="details-header-title">
+                    <%= blogs[3].header %>
+                </p>
+                <p class="details-title-small">
+                    <%= blogs[3].title %>
+                </p>
+                <p class="details-description">
+                    <%= blogs[3].description %>   
+                </p>
+                <div class="blog-tags">
+                    <p class="tag tag-purple">Design</p>
+                    <p class="tag tag-pink">Research</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
 
 </body>
 </html>

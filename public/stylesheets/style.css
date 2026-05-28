@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     position: relative;
+    box-sizing: border-box;
     font-family: "Inter", sans-serif;
     /*font-family: "Sen", sans-serif;*/
 }
@@ -19,6 +20,21 @@ ul, ol {
     width: 1220px;
 }
 
+.form-container {
+    margin: 0 auto;
+}
+
+.title {
+    font-weight: 700;
+    font-size: clamp(84px, 16vw, 223px);
+    line-height: 100%;
+    text-align: center;
+    color: rgba(26, 26, 26, 1);
+    border-top: 1px solid rgba(0, 0, 0, 0.34);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.34);
+    margin-top: 68px;
+}
+
 @media(max-width: 1440px) {
     .container {
         width: 1000px;
@@ -34,6 +50,6 @@ ul, ol {
 
 @media(max-width: 768px) {
     .container {
-        padding-inline: 25px;
+        padding-inline: 0;
     }
 }
