@@ -23,3 +23,36 @@ cancelButtons.forEach((btn) => {
         form.reset();
     });
 });
+
+const editButtons = document.querySelectorAll('.comment-edit');
+const editCancelButtons = document.querySelectorAll('.edit-cancel');
+
+const setEditing = (commentId, editing) => {
+    const form = document.getElementById(`edit-form-${commentId}`);
+    const content = document.getElementById(`content-${commentId}`);
+    if (!form) return;
+
+    form.classList.toggle('open', editing);
+    if (content) content.classList.toggle('editing', editing);
+
+    if (editing) {
+        const textarea = form.querySelector('textarea');
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }
+};
+
+editButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const form = document.getElementById(`edit-form-${btn.dataset.commentId}`);
+        setEditing(btn.dataset.commentId, !form.classList.contains('open'));
+    });
+});
+
+editCancelButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const form = document.getElementById(`edit-form-${btn.dataset.commentId}`);
+        if (form) form.reset();
+        setEditing(btn.dataset.commentId, false);
+    });
+});

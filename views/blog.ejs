@@ -28,6 +28,7 @@
     const initial = (user) => displayName(user).charAt(0).toUpperCase();
     const reactionCount = (reactions) => reactions ? reactions.length : 0;
     const hasReacted = (reactions) => !!(userId && reactions && reactions.some((r) => String(r.author) === userId));
+    const isOwner = (author) => !!(userId && author && String(author._id) === userId);
 %>
 
 <div class="container blog-wrapper">
@@ -91,7 +92,12 @@
                                 <div class="comment-head">
                                     <div>
                                         <p class="comment-author"><%= displayName(comment.author) %></p>
-                                        <p class="comment-date"><%= formatShortDate(comment.date) %></p>
+                                        <p class="comment-date">
+                                            <%= formatShortDate(comment.date) %>
+                                            <% if (comment.editedAt) { %>
+                                                <span class="comment-edited">· edited (<%= formatShortDate(comment.editedAt) %>)</span>
+                                            <% } %>
+                                        </p>
                                     </div>
                                     <div class="reactions">
                                         <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/like" method="POST">
@@ -106,8 +112,25 @@
                                         </form>
                                     </div>
                                 </div>
-                                <p class="comment-content"><%= comment.content %></p>
-                                <button type="button" class="comment-reply" data-comment-id="<%= comment._id %>">Reply</button>
+                                <p class="comment-content" id="content-<%= comment._id %>"><%= comment.content %></p>
+
+                                <% if (isOwner(comment.author)) { %>
+                                    <form class="edit-form" id="edit-form-<%= comment._id %>"
+                                          action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/edit" method="POST">
+                                        <textarea name="content" required><%= comment.content %></textarea>
+                                        <div class="edit-form-actions">
+                                            <button type="submit" class="edit-submit">Save</button>
+                                            <button type="button" class="edit-cancel" data-comment-id="<%= comment._id %>">Cancel</button>
+                                        </div>
+                                    </form>
+                                <% } %>
+
+                                <div class="comment-actions">
+                                    <button type="button" class="comment-reply" data-comment-id="<%= comment._id %>">Reply</button>
+                                    <% if (isOwner(comment.author)) { %>
+                                        <button type="button" class="comment-edit" data-comment-id="<%= comment._id %>">Edit</button>
+                                    <% } %>
+                                </div>
 
                                 <form class="reply-form" id="reply-form-<%= comment._id %>"
                                       action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies" method="POST">

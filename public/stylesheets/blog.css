@@ -386,6 +386,12 @@
     font-weight: 600;
 }
 
+.comment-edited {
+    font-weight: 400;
+    font-style: italic;
+    color: rgba(152, 162, 179, 1);
+}
+
 .comment-content {
     margin-top: 12px;
     font-size: 15px;
@@ -393,9 +399,18 @@
     color: rgba(52, 64, 84, 1);
 }
 
-.comment-reply {
-    display: inline-block;
+.comment-content.editing {
+    display: none;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 16px;
     margin-top: 12px;
+}
+
+.comment-reply,
+.comment-edit {
     padding: 0;
     background: none;
     border: none;
@@ -407,8 +422,75 @@
     cursor: pointer;
 }
 
-.comment-reply:hover {
+.comment-reply:hover,
+.comment-edit:hover {
     text-decoration: underline;
+}
+
+.edit-form {
+    display: none;
+    margin-top: 12px;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.edit-form.open {
+    display: flex;
+}
+
+.edit-form textarea {
+    width: 100%;
+    min-height: 72px;
+    box-sizing: border-box;
+    border: 1px solid rgba(208, 213, 221, 1);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 22px;
+    color: rgba(35, 37, 54, 1);
+    resize: none;
+    outline: none;
+}
+
+.edit-form-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.edit-submit {
+    background-color: rgba(105, 65, 198, 1);
+    color: #ffffff;
+    border: 1px solid rgba(105, 65, 198, 1);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-submit:hover {
+    background-color: rgba(83, 56, 158, 1);
+    border-color: rgba(83, 56, 158, 1);
+}
+
+.edit-cancel {
+    background: none;
+    border: 1px solid rgba(208, 213, 221, 1);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(52, 64, 84, 1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-cancel:hover {
+    background-color: rgba(249, 250, 251, 1);
 }
 
 .reply-form {
