@@ -344,12 +344,46 @@
     color: rgba(102, 112, 133, 1);
 }
 
-.comment-likes {
+.reactions {
     flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+}
+
+.reaction-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid rgba(234, 236, 240, 1);
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-family: inherit;
     font-size: 14px;
     line-height: 20px;
     color: rgba(102, 112, 133, 1);
     white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reaction-btn:hover {
+    border-color: rgba(105, 65, 198, 0.5);
+    color: rgba(105, 65, 198, 1);
+}
+
+.reaction-btn.liked {
+    background-color: rgba(105, 65, 198, 0.1);
+    border-color: rgba(105, 65, 198, 1);
+    color: rgba(105, 65, 198, 1);
+    font-weight: 600;
+}
+
+.reaction-btn.disliked {
+    background-color: rgba(217, 45, 32, 0.08);
+    border-color: rgba(217, 45, 32, 1);
+    color: rgba(217, 45, 32, 1);
+    font-weight: 600;
 }
 
 .comment-content {

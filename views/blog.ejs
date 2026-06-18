@@ -26,6 +26,8 @@
     });
     const displayName = (user) => user && user.email ? user.email.split('@')[0] : 'Unknown';
     const initial = (user) => displayName(user).charAt(0).toUpperCase();
+    const reactionCount = (reactions) => reactions ? reactions.length : 0;
+    const hasReacted = (reactions) => !!(userId && reactions && reactions.some((r) => String(r.author) === userId));
 %>
 
 <div class="container blog-wrapper">
@@ -83,7 +85,7 @@
                     <p class="no-comments">No comments yet. Be the first to share your thoughts.</p>
                 <% } else { %>
                     <% blog.comments.forEach((comment) => { %>
-                        <div class="comment">
+                        <div class="comment" id="comment-<%= comment._id %>">
                             <div class="comment-avatar"><%= initial(comment.author) %></div>
                             <div class="comment-body">
                                 <div class="comment-head">
@@ -91,9 +93,18 @@
                                         <p class="comment-author"><%= displayName(comment.author) %></p>
                                         <p class="comment-date"><%= formatShortDate(comment.date) %></p>
                                     </div>
-                                    <span class="comment-likes">
-                                        &#128077; <%= comment.likes ? comment.likes.length : 0 %>
-                                    </span>
+                                    <div class="reactions">
+                                        <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/like" method="POST">
+                                            <button type="submit" class="reaction-btn <%= hasReacted(comment.likes) ? 'liked' : '' %>">
+                                                &#128077; <span><%= reactionCount(comment.likes) %></span>
+                                            </button>
+                                        </form>
+                                        <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/dislike" method="POST">
+                                            <button type="submit" class="reaction-btn <%= hasReacted(comment.dislikes) ? 'disliked' : '' %>">
+                                                &#128078; <span><%= reactionCount(comment.dislikes) %></span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                                 <p class="comment-content"><%= comment.content %></p>
                                 <button type="button" class="comment-reply" data-comment-id="<%= comment._id %>">Reply</button>
@@ -117,6 +128,18 @@
                                                         <div>
                                                             <p class="comment-author"><%= displayName(reply.author) %></p>
                                                             <p class="comment-date"><%= formatShortDate(reply.date) %></p>
+                                                        </div>
+                                                        <div class="reactions">
+                                                            <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/like" method="POST">
+                                                                <button type="submit" class="reaction-btn <%= hasReacted(reply.likes) ? 'liked' : '' %>">
+                                                                    &#128077; <span><%= reactionCount(reply.likes) %></span>
+                                                                </button>
+                                                            </form>
+                                                            <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/dislike" method="POST">
+                                                                <button type="submit" class="reaction-btn <%= hasReacted(reply.dislikes) ? 'disliked' : '' %>">
+                                                                    &#128078; <span><%= reactionCount(reply.dislikes) %></span>
+                                                                </button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                     <p class="comment-content"><%= reply.content %></p>
