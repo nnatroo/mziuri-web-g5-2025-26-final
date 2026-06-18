@@ -38,7 +38,7 @@
         <% recentBlogPosts.forEach((post, index) => { %>
             <article class="recent-post-card">
                 <a href="/blogs/<%= post._id %>" class="recent-post-thumb">
-                    <img src="/images/thumbnails/thumbnail-<%= (index % 5) + 1 %>.png" alt="<%= post.title %>">
+                    <img src="<%= post.thumbnail || '/images/thumbnails/thumbnail-' + ((index % 5) + 1) + '.png' %>" alt="<%= post.title %>">
                 </a>
                 <p class="meta"><%= formatDate(post.date) %></p>
                 <a class="recent-post-title" href="/blogs/<%= post._id %>">

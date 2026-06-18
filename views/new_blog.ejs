@@ -25,10 +25,15 @@
     <% } %>
 </div>
 
-<form class="container" action="/blogs/new" method="POST">
+<form class="container" action="/blogs/new" method="POST" enctype="multipart/form-data">
     <input type="text" name="title" id="title" placeholder="Blog Title" required>
     <input type="text" name="description" id="description" placeholder="Description" required>
     <textarea name="content" id="content" placeholder="Message" required></textarea>
+    <label class="thumbnail-field" for="thumbnail">
+        <span class="thumbnail-label">Thumbnail image</span>
+        <input type="file" name="thumbnail" id="thumbnail" accept="image/png, image/jpeg, image/webp, image/gif" required>
+        <span class="thumbnail-hint">PNG, JPG, WEBP or GIF · up to 5MB</span>
+    </label>
     <button type="submit">Publish</button>
 </form>
 

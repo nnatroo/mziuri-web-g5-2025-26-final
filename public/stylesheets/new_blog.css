@@ -115,3 +115,54 @@ button:hover {
     color: rgba(26, 26, 26, 1);
     border: 1px solid rgba(26, 26, 26, 1);
 }
+
+.thumbnail-field {
+    width: 1005px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.thumbnail-label {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(35, 37, 54, 1);
+}
+
+.thumbnail-field input[type="file"] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px dashed rgba(109, 110, 118, 0.5);
+    border-radius: 2px;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(35, 37, 54, 1);
+    background-color: white;
+    cursor: pointer;
+}
+
+.thumbnail-hint {
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(109, 110, 118, 1);
+}
+
+@media (max-width: 1280px) {
+    .thumbnail-field {
+        width: 700px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .thumbnail-field {
+        width: 560px;
+    }
+}
+
+@media (max-width: 768px) {
+    .thumbnail-field {
+        width: calc(100% - 100px);
+    }
+}

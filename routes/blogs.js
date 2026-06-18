@@ -1,10 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const createError = require('http-errors');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const {requireAuth} = require('../middlewares/authMiddleware');
 const mongoose = require("mongoose");
+
+// Where uploaded thumbnails are stored (served statically from /public).
+const uploadDir = path.join(__dirname, '..', 'public', 'images', 'uploads');
+fs.mkdirSync(uploadDir, {recursive: true});
+
+const allowedThumbnailTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+const thumbnailUpload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => cb(null, uploadDir),
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname).toLowerCase();
+            cb(null, `thumbnail-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+        }
+    }),
+    limits: {fileSize: 5 * 1024 * 1024},
+    fileFilter: (req, file, cb) => {
+        if (allowedThumbnailTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(null, false);
+        }
+    }
+}).single('thumbnail');
+
+// Wrap multer so its errors (e.g. file too large) render the form instead of
+// bubbling up as an unhandled 500.
+function uploadThumbnail(req, res, next) {
+    thumbnailUpload(req, res, (err) => {
+        if (err) {
+            const email = req.session.user.email;
+            return res.render('new_blog', {email, error: 'Thumbnail upload failed. Use an image under 5MB.'});
+        }
+        next();
+    });
+}
 
 // Toggles a like/dislike on a comment or reply. A user can only have one of
 // the two active at a time, so reacting one way clears the opposite reaction.
@@ -255,44 +294,57 @@ router.post('/:blogId/comments/:commentId/replies/:replyId/:reaction(like|dislik
     }
 });
 
-router.post('/new', requireAuth, async function (req, res, next) {
+router.post('/new', requireAuth, uploadThumbnail, async function (req, res, next) {
     const {title, description, content} = req.body;
     const email = req.session.user.email;
 
-    if (!title.trim() || !description.trim() || !content.trim()) {
-        res.render('new_blog', {email, error: 'Missing required field'});
+    // Remove an orphaned upload before re-rendering the form on a validation error.
+    const renderError = (error) => {
+        if (req.file) {
+            fs.unlink(req.file.path, () => {});
+        }
+        return res.render('new_blog', {email, error});
+    };
+
+    if (!title || !title.trim() || !description || !description.trim() || !content || !content.trim()) {
+        return renderError('Missing required field');
     }
 
     if (title.length > 40) {
-        res.render('new_blog', {email, error: 'Title length must be less than 40 characters'});
+        return renderError('Title length must be less than 40 characters');
     }
 
     if (description.length > 200) {
-        res.render('new_blog', {email, error: 'Description length must be less than 200 characters'});
+        return renderError('Description length must be less than 200 characters');
     }
 
     if (content.length > 2000) {
-        res.render('new_blog', {email, error: 'Content length must be less than 2000 characters'});
+        return renderError('Content length must be less than 2000 characters');
     }
 
-    const user = await User.findOne({email});
-
-    const userID = user._id.toString();
-
-    const newBlogObj = {
-        title,
-        description,
-        content,
-        author: userID,
-    };
+    if (!req.file) {
+        return renderError('A thumbnail image is required (PNG, JPG, WEBP or GIF, up to 5MB)');
+    }
 
     try {
-        const newBlog = new Blog(newBlogObj);
+        const user = await User.findOne({email});
+
+        const newBlog = new Blog({
+            title,
+            description,
+            content,
+            thumbnail: `/images/uploads/${req.file.filename}`,
+            author: user._id,
+        });
         await newBlog.save();
 
         res.redirect('/blogs');
     } catch (error) {
         console.log(error);
+        if (req.file) {
+            fs.unlink(req.file.path, () => {});
+        }
+        next(createError(500));
     }
 })
 
