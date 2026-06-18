@@ -51,7 +51,11 @@
 
     <main class="blog-main">
         <article class="blog-article">
-            <p class="meta"><%= formatDate(blog.date) %></p>
+            <div class="meta">
+                <span><%= blog.author.email %></span> • <span> <%= blog.date.getDate() %> </span>
+                <span> <%= blog.date.toLocaleString('default', {month: 'short'}) %> </span>
+                <span> <%= blog.date.getFullYear() %> </span>
+            </div>
             <h1 class="blog-article-title"><%= blog.title %></h1>
             <div class="blog-article-content">
                 <% blog.content.split(/\n+/).forEach((paragraph) => { %>
