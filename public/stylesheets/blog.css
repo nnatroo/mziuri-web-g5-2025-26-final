@@ -427,6 +427,26 @@
     text-decoration: underline;
 }
 
+.delete-form {
+    display: inline-flex;
+}
+
+.comment-delete {
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(217, 45, 32, 1);
+    cursor: pointer;
+}
+
+.comment-delete:hover {
+    text-decoration: underline;
+}
+
 .edit-form {
     display: none;
     margin-top: 12px;

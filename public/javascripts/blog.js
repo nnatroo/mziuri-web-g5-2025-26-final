@@ -56,3 +56,13 @@ editCancelButtons.forEach((btn) => {
         setEditing(btn.dataset.commentId, false);
     });
 });
+
+const deleteForms = document.querySelectorAll('.delete-form');
+
+deleteForms.forEach((form) => {
+    form.addEventListener('submit', (event) => {
+        if (!confirm('Delete this comment? This cannot be undone.')) {
+            event.preventDefault();
+        }
+    });
+});

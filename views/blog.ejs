@@ -29,6 +29,7 @@
     const reactionCount = (reactions) => reactions ? reactions.length : 0;
     const hasReacted = (reactions) => !!(userId && reactions && reactions.some((r) => String(r.author) === userId));
     const isOwner = (author) => !!(userId && author && String(author._id) === userId);
+    const isBlogAuthor = isOwner(blog.author);
 %>
 
 <div class="container blog-wrapper">
@@ -77,7 +78,7 @@
             <p class="newsletter-note">We care about your data in our <a href="/">privacy policy</a></p>
         </section>
 
-        <section class="comments">
+        <section class="comments" id="comments">
             <h2 class="comments-title">Comments</h2>
 
             <form class="comment-form" action="/blogs/<%= blog._id %>/comments" method="POST">
@@ -133,6 +134,11 @@
                                     <button type="button" class="comment-reply" data-comment-id="<%= comment._id %>">Reply</button>
                                     <% if (isOwner(comment.author)) { %>
                                         <button type="button" class="comment-edit" data-comment-id="<%= comment._id %>">Edit</button>
+                                    <% } %>
+                                    <% if (isOwner(comment.author) || isBlogAuthor) { %>
+                                        <form class="delete-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/delete" method="POST">
+                                            <button type="submit" class="comment-delete">Delete</button>
+                                        </form>
                                     <% } %>
                                 </div>
 
