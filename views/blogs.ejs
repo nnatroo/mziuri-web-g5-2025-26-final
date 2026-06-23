@@ -23,23 +23,34 @@
     <h1 class="title">THE BLOG</h1>
 
     <%
-        const qPart = search ? '&q=' + encodeURIComponent(search) : '';
-        const sortPart = sort && sort !== 'newest' ? '&sort=' + sort : '';
-        const pageHref = (p) => '/blogs?page=' + p + qPart + sortPart;
-        const sortHref = (s) => '/blogs?sort=' + s + qPart;
+        // Build a /blogs URL from the current filters, applying any overrides.
+        const buildQuery = (o) => {
+            const p = {q: search, tag: tag, sort: (sort && sort !== 'newest') ? sort : '', page: ''};
+            Object.assign(p, o);
+            const parts = [];
+            if (p.page) parts.push('page=' + p.page);
+            if (p.q) parts.push('q=' + encodeURIComponent(p.q));
+            if (p.tag) parts.push('tag=' + encodeURIComponent(p.tag));
+            if (p.sort) parts.push('sort=' + p.sort);
+            return '/blogs' + (parts.length ? '?' + parts.join('&') : '');
+        };
+        const pageHref = (n) => buildQuery({page: n});
+        const sortHref = (s) => buildQuery({sort: (s === 'newest' ? '' : s), page: ''});
+        const tagHref = (t) => buildQuery({tag: t, page: ''});
     %>
 
     <form class="blog-search" action="/blogs" method="GET" role="search">
         <input type="search" name="q" value="<%= search %>"
                placeholder="Search posts by title or description...">
         <input type="hidden" name="sort" value="<%= sort %>">
+        <input type="hidden" name="tag" value="<%= tag %>">
         <button type="submit">Search</button>
         <% if (search) { %>
-            <a class="blog-search-clear" href="/blogs">Clear</a>
+            <a class="blog-search-clear" href="<%= buildQuery({q: ''}) %>">Clear</a>
         <% } %>
     </form>
 
-    <% if (page === 1 && !search && sort === 'newest') { %>
+    <% if (page === 1 && !search && !tag && sort === 'newest') { %>
     <section class="blogs-swiper-wrapper">
         <div class="swiper blogs-swiper">
             <div class="swiper-wrapper">
@@ -64,7 +75,7 @@
     </section>
     <% } %>
 
-    <% if (page === 1 && !search && sort === 'newest' && blogs.length >= 4) { %>
+    <% if (page === 1 && !search && !tag && sort === 'newest' && blogs.length >= 4) { %>
     <section class="recent-blogs-wrapper">
         <h2>Recent blog posts</h2>
 
@@ -150,11 +161,14 @@
 
     <section class="all-blogs-posts-wrapper">
         <div class="all-blogs-head">
-            <% if (search) { %>
-                <h4>Results for “<%= search %>” (<%= totalBlogs %>)</h4>
-            <% } else { %>
-                <h4>All blog posts</h4>
-            <% } %>
+            <div class="all-blogs-heading">
+                <% if (search || tag) { %>
+                    <h4><% if (search) { %>Results for “<%= search %>”<% } else { %>Posts<% } %><% if (tag) { %> tagged “<%= tag %>”<% } %> (<%= totalBlogs %>)</h4>
+                    <a class="filter-clear" href="/blogs">Clear filters</a>
+                <% } else { %>
+                    <h4>All blog posts</h4>
+                <% } %>
+            </div>
 
             <div class="sort-tabs">
                 <a class="sort-tab <%= sort === 'newest' ? 'active' : '' %>" href="<%= sortHref('newest') %>">Newest</a>
@@ -165,7 +179,7 @@
 
         <% if (blogs.length === 0) { %>
             <p class="no-results">
-                No posts found<% if (search) { %> for “<%= search %>”<% } %>.
+                No posts found<% if (search) { %> for “<%= search %>”<% } %><% if (tag) { %> tagged “<%= tag %>”<% } %>.
             </p>
         <% } else { %>
             <div class="blogs-grid">
@@ -182,6 +196,13 @@
                             <img src="/images/arrow-icon.svg" alt="Arrow icon">
                         </a>
                         <p class="description"><%= blog.description %></p>
+                        <% if (blog.tags && blog.tags.length) { %>
+                            <div class="card-tags">
+                                <% blog.tags.forEach((t) => { %>
+                                    <a class="tag-chip" href="<%= tagHref(t) %>"><%= t %></a>
+                                <% }) %>
+                            </div>
+                        <% } %>
                     </div>
                 <% }) %>
             </div>

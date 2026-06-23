@@ -51,6 +51,17 @@ function escapeRegExp(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// Normalize a comma-separated tag string into a clean, de-duplicated list:
+// lowercased, trimmed, no blanks, capped at 30 chars each and 10 tags total.
+function parseTags(raw) {
+    if (!raw) return [];
+    const tags = String(raw)
+        .split(',')
+        .map(t => t.trim().toLowerCase())
+        .filter(t => t && t.length <= 30);
+    return [...new Set(tags)].slice(0, 10);
+}
+
 // Removes a previously uploaded thumbnail file from disk. Only touches files in
 // our uploads dir, so bundled/default thumbnails are never deleted.
 function removeThumbnailFile(thumbnail) {
@@ -81,13 +92,19 @@ function toggleReaction(target, userId, reaction) {
 router.get('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
 
-    // Optional search across title/description, matched case-insensitively.
+    // Optional search across title/description, and an optional tag filter.
+    // Both may be active at once, so combine them with $and.
     const search = String(req.query.q || '').trim();
-    let filter = {};
+    const tag = String(req.query.tag || '').trim().toLowerCase();
+    const conditions = [];
     if (search) {
         const term = new RegExp(escapeRegExp(search), 'i');
-        filter = {$or: [{title: term}, {description: term}]};
+        conditions.push({$or: [{title: term}, {description: term}]});
     }
+    if (tag) {
+        conditions.push({tags: tag});
+    }
+    const filter = conditions.length ? {$and: conditions} : {};
 
     // Sort options. "most-liked"/"most-commented" need array-length sorting,
     // which a plain find() can't do — hence the aggregation below.
@@ -124,7 +141,7 @@ router.get('/', requireAuth, async function (req, res, next) {
     // Aggregation returns plain objects, so populate the author separately.
     blogs = await Blog.populate(blogs, {path: 'author', select: 'email'});
 
-    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs, sort});
+    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs, sort, tag});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {
@@ -438,6 +455,7 @@ router.post('/new', requireAuth, uploadThumbnail, async function (req, res, next
             title,
             description,
             content,
+            tags: parseTags(req.body.tags),
             thumbnail: `/images/uploads/${req.file.filename}`,
             author: user._id,
         });
@@ -531,6 +549,7 @@ router.post('/:blogId/edit', requireAuth, uploadThumbnail, async function (req, 
         blog.title = title;
         blog.description = description;
         blog.content = content;
+        blog.tags = parseTags(req.body.tags);
 
         // Swap in the new thumbnail and clean up the old upload only when a new
         // file was provided; otherwise keep the existing image.

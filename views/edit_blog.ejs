@@ -29,6 +29,8 @@
     <input type="text" name="title" id="title" placeholder="Blog Title" value="<%= blog.title %>" required>
     <input type="text" name="description" id="description" placeholder="Description" value="<%= blog.description %>" required>
     <textarea name="content" id="content" placeholder="Message" required><%= blog.content %></textarea>
+    <input type="text" name="tags" id="tags" placeholder="Tags (comma separated, e.g. react, css)"
+           value="<%= blog.tags && blog.tags.length ? blog.tags.join(', ') : '' %>">
     <label class="thumbnail-field" for="thumbnail">
         <span class="thumbnail-label">Thumbnail image</span>
         <% if (blog.thumbnail) { %>

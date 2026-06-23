@@ -731,3 +731,29 @@
     border-color: rgba(105, 65, 198, 1);
     color: rgba(105, 65, 198, 1);
 }
+
+/* ---------- Tags ---------- */
+
+.blog-tags {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(105, 65, 198, 0.08);
+    border-radius: 14px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 18px;
+    color: rgba(105, 65, 198, 1);
+    transition: all 0.2s;
+}
+
+.tag-chip:hover {
+    background-color: rgba(105, 65, 198, 0.16);
+}

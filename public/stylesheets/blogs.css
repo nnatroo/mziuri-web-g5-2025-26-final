@@ -443,3 +443,46 @@
     border-color: rgba(105, 65, 198, 1);
     color: #ffffff;
 }
+
+.all-blogs-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-clear {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(102, 112, 133, 1);
+}
+
+.filter-clear:hover {
+    color: rgba(105, 65, 198, 1);
+    text-decoration: underline;
+}
+
+.card-tags {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(105, 65, 198, 0.08);
+    border-radius: 14px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 18px;
+    color: rgba(105, 65, 198, 1);
+    transition: all 0.2s;
+}
+
+.tag-chip:hover {
+    background-color: rgba(105, 65, 198, 0.16);
+}

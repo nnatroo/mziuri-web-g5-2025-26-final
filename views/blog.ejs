@@ -89,6 +89,13 @@
                     <% } %>
                 <% }) %>
             </div>
+            <% if (blog.tags && blog.tags.length) { %>
+                <div class="blog-tags">
+                    <% blog.tags.forEach((t) => { %>
+                        <a class="tag-chip" href="/blogs?tag=<%= encodeURIComponent(t) %>"><%= t %></a>
+                    <% }) %>
+                </div>
+            <% } %>
             <div class="blog-reactions" id="blog-reactions">
                 <form class="reaction-form" action="/blogs/<%= blog._id %>/like" method="POST">
                     <button type="submit" class="reaction-btn <%= hasReacted(blog.likes) ? 'liked' : '' %>">

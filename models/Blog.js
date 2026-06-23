@@ -94,6 +94,10 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    tags: [{
+        type: String,
+        trim: true
+    }],
     views: {
         type: Number,
         default: 0
