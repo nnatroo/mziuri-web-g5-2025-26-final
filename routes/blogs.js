@@ -202,6 +202,50 @@ router.post('/:blogId/comments/:commentId/edit', requireAuth, async function (re
     }
 });
 
+router.post('/:blogId/comments/:commentId/replies/:replyId/edit', requireAuth, async function (req, res, next) {
+    const {content} = req.body;
+    const email = req.session.user.email;
+    const {blogId, commentId, replyId} = req.params;
+
+    if (!content || !content.trim()) {
+        return res.redirect(`/blogs/${blogId}#comment-${commentId}`);
+    }
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        const comment = blog.comments.id(commentId);
+
+        if (!comment) {
+            return next(createError(404));
+        }
+
+        const reply = comment.replies.id(replyId);
+
+        if (!reply) {
+            return next(createError(404));
+        }
+
+        if (!reply.author.equals(user._id)) {
+            return next(createError(403));
+        }
+
+        reply.content = content.trim();
+        reply.editedAt = new Date();
+        await blog.save();
+
+        res.redirect(`/blogs/${blogId}#comment-${commentId}`);
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
+
 router.post('/:blogId/comments/:commentId/delete', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
     const {blogId, commentId} = req.params;
@@ -264,10 +308,8 @@ router.post('/:blogId/comments/:commentId/replies/:replyId/delete', requireAuth,
             return next(createError(403));
         }
 
-        blog.comments.forEach(comment => {
-            comment.replies.pull(replyId);
-        });
-        
+        comment.replies.pull(replyId);
+
         await blog.save();
 
         res.redirect(`/blogs/${blogId}#comments`);

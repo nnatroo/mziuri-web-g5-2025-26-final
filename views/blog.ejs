@@ -161,7 +161,12 @@
                                                         <div class="comment-head">
                                                             <div>
                                                                 <p class="comment-author"><%= displayName(reply.author) %></p>
-                                                                <p class="comment-date"><%= formatShortDate(reply.date) %></p>
+                                                                <p class="comment-date">
+                                                                    <%= formatShortDate(reply.date) %>
+                                                                    <% if (reply.editedAt) { %>
+                                                                        <span class="comment-edited">· edited (<%= formatShortDate(reply.editedAt) %>)</span>
+                                                                    <% } %>
+                                                                </p>
                                                             </div>
                                                             <div class="reactions">
                                                                 <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/like" method="POST">
@@ -177,8 +182,20 @@
                                                             </div>
                                                         </div>
                                                         <p class="comment-content"><%= reply.content %></p>
+
+                                                        <% if (isOwner(reply.author)) { %>
+                                                            <form class="edit-form" id="edit-form-<%= reply._id %>"
+                                                                action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/edit" method="POST">
+                                                                <textarea name="content" required><%= reply.content %></textarea>
+                                                                <div class="edit-form-actions">
+                                                                    <button type="submit" class="edit-submit">Save</button>
+                                                                    <button type="button" class="edit-cancel" data-comment-id="<%= reply._id %>">Cancel</button>
+                                                                </div>
+                                                            </form>
+                                                        <% } %>
                                                     </div>
                                                 </div>
+
                                                 <div>
                                                     <% if (isOwner(reply.author)) { %>
                                                         <button type="button" class="comment-edit" data-comment-id="<%= reply._id %>">Edit</button>
