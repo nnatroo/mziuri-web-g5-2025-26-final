@@ -1,0 +1,62 @@
+.settings-account {
+    margin: 30px auto 0;
+    max-width: 1005px;
+    padding-inline: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settings-subtitle {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: rgba(26, 26, 26, 1);
+}
+
+.settings-row {
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(35, 37, 54, 1);
+}
+
+.settings-label {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.settings-link {
+    align-self: flex-start;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(105, 65, 198, 1);
+}
+
+.settings-link:hover {
+    text-decoration: underline;
+}
+
+.settings-form-title {
+    margin-top: 10px;
+}
+
+.form-error {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(217, 45, 32, 1);
+}
+
+.form-success {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(34, 139, 34, 1);
+}
+
+@media (max-width: 768px) {
+    .settings-account {
+        padding-inline: 50px;
+    }
+}
