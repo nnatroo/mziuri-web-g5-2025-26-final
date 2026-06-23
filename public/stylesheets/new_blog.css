@@ -166,3 +166,10 @@ button:hover {
         width: calc(100% - 100px);
     }
 }
+
+.current-thumbnail {
+    width: 200px;
+    height: auto;
+    border-radius: 2px;
+    object-fit: cover;
+}
