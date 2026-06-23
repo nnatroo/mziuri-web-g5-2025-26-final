@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Blog | Saved</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/blogs.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet">
+    <link rel="shortcut icon" href="/images/favicon.svg" type="image/x-icon">
+</head>
+<body>
+<%- include('partials/header', {email}) %>
+
+<div class="container blogs-wrapper">
+
+    <h1 class="title">SAVED</h1>
+
+    <section class="all-blogs-posts-wrapper">
+        <h4>Saved posts</h4>
+
+        <% if (blogs.length === 0) { %>
+            <p class="bookmarks-empty">
+                You haven't saved any posts yet. Open a post and tap “Save for later”.
+            </p>
+        <% } else { %>
+            <div class="blogs-grid">
+                <% blogs.forEach((blog) => { %>
+                    <div class="blog-card">
+                        <figure>
+                            <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
+                        </figure>
+                        <div>
+                            <p class="meta"><%= blog.author.email %>
+                                • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+                        </div>
+                        <a href="/blogs/<%= blog._id %>">
+                            <span><%= blog.title %></span>
+                            <img src="/images/arrow-icon.svg" alt="Arrow icon">
+                        </a>
+                        <p class="description"><%= blog.description %></p>
+                        <form class="bookmark-form" action="/blogs/<%= blog._id %>/bookmark" method="POST">
+                            <button type="submit" class="bookmark-remove">★ Remove</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+</div>
+
+<%- include('partials/footer'); %>
+
+</body>
+</html>

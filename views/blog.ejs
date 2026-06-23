@@ -58,6 +58,11 @@
                 <span> <%= blog.date.getFullYear() %> </span>
             </div>
             <h1 class="blog-article-title"><%= blog.title %></h1>
+            <form class="bookmark-form" action="/blogs/<%= blog._id %>/bookmark" method="POST">
+                <button type="submit" class="bookmark-btn <%= isBookmarked ? 'saved' : '' %>">
+                    <%= isBookmarked ? '★ Saved' : '☆ Save for later' %>
+                </button>
+            </form>
             <% if (isBlogAuthor) { %>
                 <div class="blog-owner-actions">
                     <a class="blog-edit" href="/blogs/<%= blog._id %>/edit">Edit post</a>
