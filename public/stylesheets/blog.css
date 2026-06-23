@@ -597,6 +597,46 @@
     font-size: 14px;
 }
 
+/* ---------- Owner actions ---------- */
+
+.blog-owner-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.blog-edit {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(105, 65, 198, 1);
+}
+
+.blog-edit:hover {
+    text-decoration: underline;
+}
+
+.delete-blog-form {
+    display: inline-flex;
+}
+
+.blog-delete {
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(217, 45, 32, 1);
+    cursor: pointer;
+}
+
+.blog-delete:hover {
+    text-decoration: underline;
+}
+
 /* ---------- Post reactions ---------- */
 
 .blog-reactions {
