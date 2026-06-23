@@ -12,7 +12,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 8
-    }
+    },
+    bookmarks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Blog'
+    }]
 }, {
     timestamps: true
 });

@@ -198,3 +198,31 @@
 .blog-card .description {
     margin-top: 12px;
 }
+
+.blog-card .bookmark-form {
+    margin-top: 12px;
+}
+
+.bookmark-remove {
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(105, 65, 198, 1);
+    cursor: pointer;
+}
+
+.bookmark-remove:hover {
+    text-decoration: underline;
+}
+
+.bookmarks-empty {
+    margin-top: 32px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(102, 112, 133, 1);
+}

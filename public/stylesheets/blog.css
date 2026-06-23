@@ -596,3 +596,39 @@
     height: 32px;
     font-size: 14px;
 }
+
+/* ---------- Bookmark ---------- */
+
+.bookmark-form {
+    margin-top: 16px;
+}
+
+.bookmark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid rgba(105, 65, 198, 1);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(105, 65, 198, 1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bookmark-btn:hover {
+    background-color: rgba(105, 65, 198, 0.08);
+}
+
+.bookmark-btn.saved {
+    background-color: rgba(105, 65, 198, 1);
+    color: #ffffff;
+}
+
+.bookmark-btn.saved:hover {
+    background-color: rgba(83, 56, 158, 1);
+}

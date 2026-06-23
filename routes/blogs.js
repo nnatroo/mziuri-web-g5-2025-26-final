@@ -76,6 +76,25 @@ router.get('/new', requireAuth, function (req, res, next) {
     res.render('new_blog', {email, error: null});
 })
 
+router.get('/saved', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+
+    try {
+        const user = await User.findOne({email}).populate({
+            path: 'bookmarks',
+            populate: {path: 'author', select: 'email'}
+        });
+
+        // Newest-saved first; drop any bookmarks whose post was since deleted.
+        const blogs = user ? user.bookmarks.filter(Boolean).reverse() : [];
+
+        res.render('saved', {email, blogs});
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
+
 router.get('/:blogId', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
     const blogId = req.params.blogId
@@ -97,8 +116,9 @@ router.get('/:blogId', requireAuth, async function (req, res, next) {
 
         const user = await User.findOne({email});
         const userId = user ? user._id.toString() : null;
+        const isBookmarked = !!(user && user.bookmarks.some((id) => id.equals(blogId)));
 
-        res.render("blog", {email, blog, recentBlogPosts, userId});
+        res.render("blog", {email, blog, recentBlogPosts, userId, isBookmarked});
     } catch (error) {
         return next(createError(404));
     }
@@ -347,5 +367,33 @@ router.post('/new', requireAuth, uploadThumbnail, async function (req, res, next
         next(createError(500));
     }
 })
+
+router.post('/:blogId/bookmark', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId} = req.params;
+
+    try {
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        const user = await User.findOne({email});
+        const alreadySaved = user.bookmarks.some((id) => id.equals(blogId));
+
+        // Toggle atomically so concurrent saves can't duplicate the entry.
+        await User.updateOne(
+            {_id: user._id},
+            alreadySaved ? {$pull: {bookmarks: blogId}} : {$addToSet: {bookmarks: blogId}}
+        );
+
+        // Return to wherever the toggle was clicked (post page or the saved list).
+        res.redirect(req.get('Referer') || `/blogs/${blogId}`);
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
 
 module.exports = router;
