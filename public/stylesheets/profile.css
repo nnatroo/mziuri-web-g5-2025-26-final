@@ -67,9 +67,14 @@
     color: rgba(102, 112, 133, 1);
 }
 
-.profile-edit-link {
+.profile-actions {
     margin-top: 12px;
-    align-self: flex-start;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.profile-edit-link {
     border: 1px solid rgba(105, 65, 198, 1);
     border-radius: 8px;
     padding: 8px 18px;

@@ -42,7 +42,10 @@
             <% } %>
             <p class="profile-postcount"><%= blogs.length %> post<%= blogs.length === 1 ? '' : 's' %></p>
             <% if (isOwnProfile) { %>
-                <a class="profile-edit-link" href="/users/<%= profileUser._id %>/edit">Edit profile</a>
+                <div class="profile-actions">
+                    <a class="profile-edit-link" href="/users/<%= profileUser._id %>/edit">Edit profile</a>
+                    <a class="profile-edit-link" href="/settings">Settings</a>
+                </div>
             <% } %>
         </div>
     </section>
