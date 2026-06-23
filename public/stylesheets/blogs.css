@@ -407,3 +407,39 @@
     height: 228px;
     object-fit: cover;
 }
+
+.all-blogs-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.sort-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sort-tab {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(102, 112, 133, 1);
+    transition: all 0.2s;
+}
+
+.sort-tab:hover {
+    border-color: rgba(105, 65, 198, 1);
+    color: rgba(105, 65, 198, 1);
+}
+
+.sort-tab.active {
+    background-color: rgba(105, 65, 198, 1);
+    border-color: rgba(105, 65, 198, 1);
+    color: #ffffff;
+}

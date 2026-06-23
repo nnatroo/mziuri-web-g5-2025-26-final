@@ -22,18 +22,24 @@
 
     <h1 class="title">THE BLOG</h1>
 
-    <% const pageHref = (p) => '/blogs?page=' + p + (search ? '&q=' + encodeURIComponent(search) : ''); %>
+    <%
+        const qPart = search ? '&q=' + encodeURIComponent(search) : '';
+        const sortPart = sort && sort !== 'newest' ? '&sort=' + sort : '';
+        const pageHref = (p) => '/blogs?page=' + p + qPart + sortPart;
+        const sortHref = (s) => '/blogs?sort=' + s + qPart;
+    %>
 
     <form class="blog-search" action="/blogs" method="GET" role="search">
         <input type="search" name="q" value="<%= search %>"
                placeholder="Search posts by title or description...">
+        <input type="hidden" name="sort" value="<%= sort %>">
         <button type="submit">Search</button>
         <% if (search) { %>
             <a class="blog-search-clear" href="/blogs">Clear</a>
         <% } %>
     </form>
 
-    <% if (page === 1 && !search) { %>
+    <% if (page === 1 && !search && sort === 'newest') { %>
     <section class="blogs-swiper-wrapper">
         <div class="swiper blogs-swiper">
             <div class="swiper-wrapper">
@@ -58,7 +64,7 @@
     </section>
     <% } %>
 
-    <% if (page === 1 && !search && blogs.length >= 4) { %>
+    <% if (page === 1 && !search && sort === 'newest' && blogs.length >= 4) { %>
     <section class="recent-blogs-wrapper">
         <h2>Recent blog posts</h2>
 
@@ -143,11 +149,19 @@
     <% } %>
 
     <section class="all-blogs-posts-wrapper">
-        <% if (search) { %>
-            <h4>Results for “<%= search %>” (<%= totalBlogs %>)</h4>
-        <% } else { %>
-            <h4>All blog posts</h4>
-        <% } %>
+        <div class="all-blogs-head">
+            <% if (search) { %>
+                <h4>Results for “<%= search %>” (<%= totalBlogs %>)</h4>
+            <% } else { %>
+                <h4>All blog posts</h4>
+            <% } %>
+
+            <div class="sort-tabs">
+                <a class="sort-tab <%= sort === 'newest' ? 'active' : '' %>" href="<%= sortHref('newest') %>">Newest</a>
+                <a class="sort-tab <%= sort === 'most-liked' ? 'active' : '' %>" href="<%= sortHref('most-liked') %>">Most liked</a>
+                <a class="sort-tab <%= sort === 'most-commented' ? 'active' : '' %>" href="<%= sortHref('most-commented') %>">Most commented</a>
+            </div>
+        </div>
 
         <% if (blogs.length === 0) { %>
             <p class="no-results">

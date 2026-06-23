@@ -89,6 +89,16 @@ router.get('/', requireAuth, async function (req, res, next) {
         filter = {$or: [{title: term}, {description: term}]};
     }
 
+    // Sort options. "most-liked"/"most-commented" need array-length sorting,
+    // which a plain find() can't do — hence the aggregation below.
+    const allowedSorts = ['newest', 'most-liked', 'most-commented'];
+    const sort = allowedSorts.includes(req.query.sort) ? req.query.sort : 'newest';
+    const sortStage = {
+        'newest': {date: -1},
+        'most-liked': {likesCount: -1, date: -1},
+        'most-commented': {commentsCount: -1, date: -1}
+    }[sort];
+
     const perPage = 6;
     const totalBlogs = await Blog.countDocuments(filter);
     const totalPages = Math.max(1, Math.ceil(totalBlogs / perPage));
@@ -101,13 +111,20 @@ router.get('/', requireAuth, async function (req, res, next) {
         page = totalPages;
     }
 
-    const blogs = await Blog.find(filter)
-        .sort({date: -1})
-        .skip((page - 1) * perPage)
-        .limit(perPage)
-        .populate("author", "email");
+    let blogs = await Blog.aggregate([
+        {$match: filter},
+        {$addFields: {
+            likesCount: {$size: {$ifNull: ['$likes', []]}},
+            commentsCount: {$size: {$ifNull: ['$comments', []]}}
+        }},
+        {$sort: sortStage},
+        {$skip: (page - 1) * perPage},
+        {$limit: perPage}
+    ]);
+    // Aggregation returns plain objects, so populate the author separately.
+    blogs = await Blog.populate(blogs, {path: 'author', select: 'email'});
 
-    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs});
+    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs, sort});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {
