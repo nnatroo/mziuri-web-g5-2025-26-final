@@ -140,9 +140,9 @@ router.get('/:blogId', requireAuth, async function (req, res, next) {
 
     try {
         const blog = await Blog.findById(blogId)
-            .populate("author", "email")
-            .populate("comments.author", "email")
-            .populate("comments.replies.author", "email");
+            .populate("author", "email username avatar")
+            .populate("comments.author", "email username")
+            .populate("comments.replies.author", "email username");
 
         if (!blog) {
             return next(createError(404));

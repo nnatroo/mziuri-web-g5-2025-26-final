@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Blog | Profile</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/blogs.css">
+    <link rel="stylesheet" href="/stylesheets/profile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet">
+    <link rel="shortcut icon" href="/images/favicon.svg" type="image/x-icon">
+</head>
+<body>
+<%- include('partials/header', {email}) %>
+
+<%
+    const name = profileUser.username && profileUser.username.trim()
+        ? profileUser.username
+        : profileUser.email.split('@')[0];
+    const initial = name.charAt(0).toUpperCase();
+%>
+
+<div class="container blogs-wrapper">
+    <section class="profile-header">
+        <div class="profile-avatar">
+            <% if (profileUser.avatar) { %>
+                <img src="<%= profileUser.avatar %>" alt="<%= name %>">
+            <% } else { %>
+                <span><%= initial %></span>
+            <% } %>
+        </div>
+        <div class="profile-info">
+            <h1 class="profile-name"><%= name %></h1>
+            <p class="profile-email"><%= profileUser.email %></p>
+            <% if (profileUser.bio) { %>
+                <p class="profile-bio"><%= profileUser.bio %></p>
+            <% } %>
+            <p class="profile-postcount"><%= blogs.length %> post<%= blogs.length === 1 ? '' : 's' %></p>
+            <% if (isOwnProfile) { %>
+                <a class="profile-edit-link" href="/users/<%= profileUser._id %>/edit">Edit profile</a>
+            <% } %>
+        </div>
+    </section>
+
+    <section class="all-blogs-posts-wrapper">
+        <h4>Posts</h4>
+
+        <% if (blogs.length === 0) { %>
+            <p class="bookmarks-empty">No posts yet.</p>
+        <% } else { %>
+            <div class="blogs-grid">
+                <% blogs.forEach((blog) => { %>
+                    <div class="blog-card">
+                        <figure>
+                            <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
+                        </figure>
+                        <div>
+                            <p class="meta"><%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+                        </div>
+                        <a href="/blogs/<%= blog._id %>">
+                            <span><%= blog.title %></span>
+                            <img src="/images/arrow-icon.svg" alt="Arrow icon">
+                        </a>
+                        <p class="description"><%= blog.description %></p>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+</div>
+
+<%- include('partials/footer'); %>
+
+</body>
+</html>

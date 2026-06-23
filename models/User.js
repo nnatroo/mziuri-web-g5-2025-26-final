@@ -13,6 +13,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 8
     },
+    username: {
+        type: String,
+        trim: true,
+        maxlength: 30
+    },
+    avatar: {
+        type: String
+    },
+    bio: {
+        type: String,
+        trim: true,
+        maxlength: 300
+    },
     bookmarks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Blog'
