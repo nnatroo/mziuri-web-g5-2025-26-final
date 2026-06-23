@@ -65,6 +65,18 @@
                     <% } %>
                 <% }) %>
             </div>
+            <div class="blog-reactions" id="blog-reactions">
+                <form class="reaction-form" action="/blogs/<%= blog._id %>/like" method="POST">
+                    <button type="submit" class="reaction-btn <%= hasReacted(blog.likes) ? 'liked' : '' %>">
+                        &#128077; <span><%= reactionCount(blog.likes) %></span>
+                    </button>
+                </form>
+                <form class="reaction-form" action="/blogs/<%= blog._id %>/dislike" method="POST">
+                    <button type="submit" class="reaction-btn <%= hasReacted(blog.dislikes) ? 'disliked' : '' %>">
+                        &#128078; <span><%= reactionCount(blog.dislikes) %></span>
+                    </button>
+                </form>
+            </div>
         </article>
 
         <section class="newsletter">

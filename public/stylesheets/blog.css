@@ -596,3 +596,12 @@
     height: 32px;
     font-size: 14px;
 }
+
+/* ---------- Post reactions ---------- */
+
+.blog-reactions {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
