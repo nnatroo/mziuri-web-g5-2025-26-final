@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./stylesheets/header.css">
     <link rel="stylesheet" href="./stylesheets/footer.css">
     <link rel="stylesheet" href="./stylesheets/blogs.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
@@ -21,6 +22,43 @@
 
     <h1 class="title">THE BLOG</h1>
 
+    <% const pageHref = (p) => '/blogs?page=' + p + (search ? '&q=' + encodeURIComponent(search) : ''); %>
+
+    <form class="blog-search" action="/blogs" method="GET" role="search">
+        <input type="search" name="q" value="<%= search %>"
+               placeholder="Search posts by title or description...">
+        <button type="submit">Search</button>
+        <% if (search) { %>
+            <a class="blog-search-clear" href="/blogs">Clear</a>
+        <% } %>
+    </form>
+
+    <% if (page === 1 && !search) { %>
+    <section class="blogs-swiper-wrapper">
+        <div class="swiper blogs-swiper">
+            <div class="swiper-wrapper">
+                <% blogs.forEach((blog) => { %>
+                    <div class="swiper-slide">
+                        <a href="/blogs/<%= blog._id %>" class="swiper-blog-card">
+                            <figure>
+                                <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-1.png' %>" alt="<%= blog.title %>">
+                            </figure>
+                            <p class="meta"><%= blog.author.email %>
+                                • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+                            <h3><%= blog.title %></h3>
+                            <p class="description"><%= blog.description %></p>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (page === 1 && !search && blogs.length >= 4) { %>
     <section class="recent-blogs-wrapper">
         <h2>Recent blog posts</h2>
 
@@ -102,30 +140,68 @@
             </div>
         </div>
     </section>
+    <% } %>
 
     <section class="all-blogs-posts-wrapper">
-        <h4>All blog posts</h4>
-        <div class="blogs-grid">
-            <% blogs.forEach((blog) => {%>
-                <div class="blog-card">
-                    <figure>
-                        <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
-                    </figure>
-                    <div>
-                        <p class="meta"><%= blog.author.email %>> • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+        <% if (search) { %>
+            <h4>Results for “<%= search %>” (<%= totalBlogs %>)</h4>
+        <% } else { %>
+            <h4>All blog posts</h4>
+        <% } %>
+
+        <% if (blogs.length === 0) { %>
+            <p class="no-results">
+                No posts found<% if (search) { %> for “<%= search %>”<% } %>.
+            </p>
+        <% } else { %>
+            <div class="blogs-grid">
+                <% blogs.forEach((blog) => {%>
+                    <div class="blog-card">
+                        <figure>
+                            <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
+                        </figure>
+                        <div>
+                            <p class="meta"><%= blog.author.email %>> • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+                        </div>
+                        <a href="/blogs/<%= blog._id %>">
+                            <span><%= blog.title %></span>
+                            <img src="/images/arrow-icon.svg" alt="Arrow icon">
+                        </a>
+                        <p class="description"><%= blog.description %></p>
                     </div>
-                    <a href="/blogs/<%= blog._id %>">
-                        <span><%= blog.title %></span>
-                        <img src="/images/arrow-icon.svg" alt="Arrow icon">
-                    </a>
-                    <p class="description"><%= blog.description %></p>
-                </div>
-            <% }) %>
-        </div>
+                <% }) %>
+            </div>
+
+            <% if (totalPages > 1) { %>
+                <nav class="pagination" aria-label="Blog pages">
+                    <% if (page > 1) { %>
+                        <a class="pagination-arrow" href="<%= pageHref(page - 1) %>">Previous</a>
+                    <% } else { %>
+                        <span class="pagination-arrow disabled">Previous</span>
+                    <% } %>
+
+                    <% for (let p = 1; p <= totalPages; p++) { %>
+                        <% if (p === page) { %>
+                            <span class="pagination-page active"><%= p %></span>
+                        <% } else { %>
+                            <a class="pagination-page" href="<%= pageHref(p) %>"><%= p %></a>
+                        <% } %>
+                    <% } %>
+
+                    <% if (page < totalPages) { %>
+                        <a class="pagination-arrow" href="<%= pageHref(page + 1) %>">Next</a>
+                    <% } else { %>
+                        <span class="pagination-arrow disabled">Next</span>
+                    <% } %>
+                </nav>
+            <% } %>
+        <% } %>
     </section>
 </div>
 
 <%- include('partials/footer'); %>
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="/javascripts/blogs.js"></script>
 </body>
 </html>

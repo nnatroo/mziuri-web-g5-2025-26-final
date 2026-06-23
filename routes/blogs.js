@@ -33,16 +33,30 @@ const thumbnailUpload = multer({
     }
 }).single('thumbnail');
 
-// Wrap multer so its errors (e.g. file too large) render the form instead of
-// bubbling up as an unhandled 500.
+// Wrap multer so its errors (e.g. file too large) are surfaced to the route
+// handler via req.uploadError, which re-renders the relevant form instead of
+// letting the error bubble up as an unhandled 500.
 function uploadThumbnail(req, res, next) {
     thumbnailUpload(req, res, (err) => {
         if (err) {
-            const email = req.session.user.email;
-            return res.render('new_blog', {email, error: 'Thumbnail upload failed. Use an image under 5MB.'});
+            req.uploadError = 'Thumbnail upload failed. Use an image under 5MB.';
         }
         next();
     });
+}
+
+// Escape user input so it is matched literally inside a RegExp (a stray "(" or
+// "*" from the search box would otherwise break or skew the query).
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Removes a previously uploaded thumbnail file from disk. Only touches files in
+// our uploads dir, so bundled/default thumbnails are never deleted.
+function removeThumbnailFile(thumbnail) {
+    if (thumbnail && thumbnail.startsWith('/images/uploads/')) {
+        fs.unlink(path.join(__dirname, '..', 'public', thumbnail), () => {});
+    }
 }
 
 // Toggles a like/dislike on a comment or reply. A user can only have one of
@@ -66,9 +80,34 @@ function toggleReaction(target, userId, reaction) {
 
 router.get('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
-    const blogs = await Blog.find().sort({date: -1}).populate("author", "email")
 
-    res.render('blogs', {email, blogs});
+    // Optional search across title/description, matched case-insensitively.
+    const search = String(req.query.q || '').trim();
+    let filter = {};
+    if (search) {
+        const term = new RegExp(escapeRegExp(search), 'i');
+        filter = {$or: [{title: term}, {description: term}]};
+    }
+
+    const perPage = 6;
+    const totalBlogs = await Blog.countDocuments(filter);
+    const totalPages = Math.max(1, Math.ceil(totalBlogs / perPage));
+
+    // Clamp the requested page into [1, totalPages] so bad/oob input is harmless.
+    let page = parseInt(req.query.page, 10);
+    if (isNaN(page) || page < 1) {
+        page = 1;
+    } else if (page > totalPages) {
+        page = totalPages;
+    }
+
+    const blogs = await Blog.find(filter)
+        .sort({date: -1})
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .populate("author", "email");
+
+    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {
@@ -326,6 +365,10 @@ router.post('/new', requireAuth, uploadThumbnail, async function (req, res, next
         return res.render('new_blog', {email, error});
     };
 
+    if (req.uploadError) {
+        return renderError(req.uploadError);
+    }
+
     if (!title || !title.trim() || !description || !description.trim() || !content || !content.trim()) {
         return renderError('Missing required field');
     }
@@ -367,6 +410,151 @@ router.post('/new', requireAuth, uploadThumbnail, async function (req, res, next
         next(createError(500));
     }
 })
+
+router.get('/:blogId/edit', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId} = req.params;
+
+    try {
+        const blog = await Blog.findById(blogId).populate('author', 'email');
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        const user = await User.findOne({email});
+
+        if (!user || !blog.author._id.equals(user._id)) {
+            return next(createError(403));
+        }
+
+        res.render('edit_blog', {email, blog, error: null});
+    } catch (error) {
+        return next(createError(404));
+    }
+});
+
+router.post('/:blogId/edit', requireAuth, uploadThumbnail, async function (req, res, next) {
+    const {title, description, content} = req.body;
+    const email = req.session.user.email;
+    const {blogId} = req.params;
+
+    // Discard any freshly uploaded file when we are not going to keep it.
+    const discardUpload = () => {
+        if (req.file) {
+            fs.unlink(req.file.path, () => {});
+        }
+    };
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId).populate('author', 'email');
+
+        if (!blog) {
+            discardUpload();
+            return next(createError(404));
+        }
+
+        if (!user || !blog.author._id.equals(user._id)) {
+            discardUpload();
+            return next(createError(403));
+        }
+
+        // Re-render the edit form on a problem, discarding the orphaned upload.
+        const renderError = (error) => {
+            discardUpload();
+            return res.render('edit_blog', {email, blog, error});
+        };
+
+        if (req.uploadError) {
+            return renderError(req.uploadError);
+        }
+
+        if (!title || !title.trim() || !description || !description.trim() || !content || !content.trim()) {
+            return renderError('Missing required field');
+        }
+
+        if (title.length > 40) {
+            return renderError('Title length must be less than 40 characters');
+        }
+
+        if (description.length > 200) {
+            return renderError('Description length must be less than 200 characters');
+        }
+
+        if (content.length > 2000) {
+            return renderError('Content length must be less than 2000 characters');
+        }
+
+        blog.title = title;
+        blog.description = description;
+        blog.content = content;
+
+        // Swap in the new thumbnail and clean up the old upload only when a new
+        // file was provided; otherwise keep the existing image.
+        if (req.file) {
+            const oldThumbnail = blog.thumbnail;
+            blog.thumbnail = `/images/uploads/${req.file.filename}`;
+            removeThumbnailFile(oldThumbnail);
+        }
+
+        await blog.save();
+
+        res.redirect(`/blogs/${blogId}`);
+    } catch (error) {
+        console.log(error);
+        discardUpload();
+        next(createError(500));
+    }
+});
+
+router.post('/:blogId/delete', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId} = req.params;
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        if (!user || !blog.author.equals(user._id)) {
+            return next(createError(403));
+        }
+
+        removeThumbnailFile(blog.thumbnail);
+        await blog.deleteOne();
+
+        res.redirect('/blogs');
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
+
+router.post('/:blogId/:reaction(like|dislike)', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId, reaction} = req.params;
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        toggleReaction(blog, user._id, reaction === 'like' ? 'likes' : 'dislikes');
+        await blog.save();
+
+        res.redirect(`/blogs/${blogId}#blog-reactions`);
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
 
 router.post('/:blogId/bookmark', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
