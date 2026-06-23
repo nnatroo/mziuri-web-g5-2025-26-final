@@ -483,4 +483,26 @@ router.post('/:blogId/delete', requireAuth, async function (req, res, next) {
     }
 });
 
+router.post('/:blogId/:reaction(like|dislike)', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId, reaction} = req.params;
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        toggleReaction(blog, user._id, reaction === 'like' ? 'likes' : 'dislikes');
+        await blog.save();
+
+        res.redirect(`/blogs/${blogId}#blog-reactions`);
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
+
 module.exports = router;
