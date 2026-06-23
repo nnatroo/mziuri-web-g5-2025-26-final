@@ -237,6 +237,46 @@ router.post('/:blogId/comments/:commentId/delete', requireAuth, async function (
     }
 });
 
+router.post('/:blogId/comments/:commentId/replies/:replyId/delete', requireAuth, async function (req, res, next) {
+    const email = req.session.user.email;
+    const {blogId, commentId, replyId} = req.params;
+
+    try {
+        const user = await User.findOne({email});
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return next(createError(404));
+        }
+
+        const comment = blog.comments.id(commentId);
+
+        if (!comment) {
+            return next(createError(404));
+        }
+
+        const reply = comment.replies.id(replyId);
+
+        const isReplyAUthor = reply.author.equals(user._id);
+        const isBlogAuthor = blog.author.equals(user._id);
+
+        if (!isReplyAUthor && !isBlogAuthor) {
+            return next(createError(403));
+        }
+
+        blog.comments.forEach(comment => {
+            comment.replies.pull(replyId);
+        });
+        
+        await blog.save();
+
+        res.redirect(`/blogs/${blogId}#comments`);
+    } catch (error) {
+        console.log(error);
+        next(createError(500));
+    }
+});
+
 router.post('/:blogId/comments/:commentId/:reaction(like|dislike)', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
     const {blogId, commentId, reaction} = req.params;

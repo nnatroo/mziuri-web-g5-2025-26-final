@@ -154,28 +154,40 @@
                                 <% if (comment.replies && comment.replies.length > 0) { %>
                                     <div class="reply-list">
                                         <% comment.replies.forEach((reply) => { %>
-                                            <div class="comment reply">
-                                                <div class="comment-avatar"><%= initial(reply.author) %></div>
-                                                <div class="comment-body">
-                                                    <div class="comment-head">
-                                                        <div>
-                                                            <p class="comment-author"><%= displayName(reply.author) %></p>
-                                                            <p class="comment-date"><%= formatShortDate(reply.date) %></p>
+                                            <div>
+                                                <div class="comment reply">
+                                                    <div class="comment-avatar"><%= initial(reply.author) %></div>
+                                                    <div class="comment-body">
+                                                        <div class="comment-head">
+                                                            <div>
+                                                                <p class="comment-author"><%= displayName(reply.author) %></p>
+                                                                <p class="comment-date"><%= formatShortDate(reply.date) %></p>
+                                                            </div>
+                                                            <div class="reactions">
+                                                                <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/like" method="POST">
+                                                                    <button type="submit" class="reaction-btn <%= hasReacted(reply.likes) ? 'liked' : '' %>">
+                                                                        &#128077; <span><%= reactionCount(reply.likes) %></span>
+                                                                    </button>
+                                                                </form>
+                                                                <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/dislike" method="POST">
+                                                                    <button type="submit" class="reaction-btn <%= hasReacted(reply.dislikes) ? 'disliked' : '' %>">
+                                                                        &#128078; <span><%= reactionCount(reply.dislikes) %></span>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                        <div class="reactions">
-                                                            <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/like" method="POST">
-                                                                <button type="submit" class="reaction-btn <%= hasReacted(reply.likes) ? 'liked' : '' %>">
-                                                                    &#128077; <span><%= reactionCount(reply.likes) %></span>
-                                                                </button>
-                                                            </form>
-                                                            <form class="reaction-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/dislike" method="POST">
-                                                                <button type="submit" class="reaction-btn <%= hasReacted(reply.dislikes) ? 'disliked' : '' %>">
-                                                                    &#128078; <span><%= reactionCount(reply.dislikes) %></span>
-                                                                </button>
-                                                            </form>
-                                                        </div>
+                                                        <p class="comment-content"><%= reply.content %></p>
                                                     </div>
-                                                    <p class="comment-content"><%= reply.content %></p>
+                                                </div>
+                                                <div>
+                                                    <% if (isOwner(reply.author)) { %>
+                                                        <button type="button" class="comment-edit" data-comment-id="<%= reply._id %>">Edit</button>
+                                                    <% } %>
+                                                    <% if (isOwner(reply.author) || isBlogAuthor) { %>
+                                                        <form class="delete-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/delete" method="POST">
+                                                            <button type="submit" class="comment-delete">Delete</button>
+                                                        </form>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         <% }) %>
