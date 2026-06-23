@@ -21,6 +21,7 @@
 
     <h1 class="title">THE BLOG</h1>
 
+    <% if (page === 1 && blogs.length >= 4) { %>
     <section class="recent-blogs-wrapper">
         <h2>Recent blog posts</h2>
 
@@ -102,6 +103,7 @@
             </div>
         </div>
     </section>
+    <% } %>
 
     <section class="all-blogs-posts-wrapper">
         <h4>All blog posts</h4>
@@ -122,6 +124,30 @@
                 </div>
             <% }) %>
         </div>
+
+        <% if (totalPages > 1) { %>
+            <nav class="pagination" aria-label="Blog pages">
+                <% if (page > 1) { %>
+                    <a class="pagination-arrow" href="/blogs?page=<%= page - 1 %>">Previous</a>
+                <% } else { %>
+                    <span class="pagination-arrow disabled">Previous</span>
+                <% } %>
+
+                <% for (let p = 1; p <= totalPages; p++) { %>
+                    <% if (p === page) { %>
+                        <span class="pagination-page active"><%= p %></span>
+                    <% } else { %>
+                        <a class="pagination-page" href="/blogs?page=<%= p %>"><%= p %></a>
+                    <% } %>
+                <% } %>
+
+                <% if (page < totalPages) { %>
+                    <a class="pagination-arrow" href="/blogs?page=<%= page + 1 %>">Next</a>
+                <% } else { %>
+                    <span class="pagination-arrow disabled">Next</span>
+                <% } %>
+            </nav>
+        <% } %>
     </section>
 </div>
 

@@ -66,9 +66,26 @@ function toggleReaction(target, userId, reaction) {
 
 router.get('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
-    const blogs = await Blog.find().sort({date: -1}).populate("author", "email")
 
-    res.render('blogs', {email, blogs});
+    const perPage = 6;
+    const totalBlogs = await Blog.countDocuments();
+    const totalPages = Math.max(1, Math.ceil(totalBlogs / perPage));
+
+    // Clamp the requested page into [1, totalPages] so bad/oob input is harmless.
+    let page = parseInt(req.query.page, 10);
+    if (isNaN(page) || page < 1) {
+        page = 1;
+    } else if (page > totalPages) {
+        page = totalPages;
+    }
+
+    const blogs = await Blog.find()
+        .sort({date: -1})
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .populate("author", "email");
+
+    res.render('blogs', {email, blogs, page, totalPages});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {

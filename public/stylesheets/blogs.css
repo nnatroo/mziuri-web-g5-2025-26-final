@@ -198,3 +198,47 @@
 .blog-card .description {
     margin-top: 12px;
 }
+
+.pagination {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-page,
+.pagination-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(26, 26, 26, 1);
+    transition: all 0.2s;
+}
+
+.pagination-page:hover,
+.pagination-arrow:hover {
+    border-color: rgba(105, 65, 198, 1);
+    color: rgba(105, 65, 198, 1);
+}
+
+.pagination-page.active {
+    background-color: rgba(105, 65, 198, 1);
+    border-color: rgba(105, 65, 198, 1);
+    color: #ffffff;
+}
+
+.pagination-arrow.disabled {
+    color: rgba(102, 112, 133, 0.5);
+    border-color: rgba(0, 0, 0, 0.06);
+    cursor: not-allowed;
+}
