@@ -181,7 +181,7 @@
                                                                 </form>
                                                             </div>
                                                         </div>
-                                                        <p class="comment-content"><%= reply.content %></p>
+                                                        <p class="comment-content" id="content-<%= reply._id %>"><%= reply.content %></p>
 
                                                         <% if (isOwner(reply.author)) { %>
                                                             <form class="edit-form" id="edit-form-<%= reply._id %>"
@@ -193,18 +193,18 @@
                                                                 </div>
                                                             </form>
                                                         <% } %>
-                                                    </div>
-                                                </div>
 
-                                                <div>
-                                                    <% if (isOwner(reply.author)) { %>
-                                                        <button type="button" class="comment-edit" data-comment-id="<%= reply._id %>">Edit</button>
-                                                    <% } %>
-                                                    <% if (isOwner(reply.author) || isBlogAuthor) { %>
-                                                        <form class="delete-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/delete" method="POST">
-                                                            <button type="submit" class="comment-delete">Delete</button>
-                                                        </form>
-                                                    <% } %>
+                                                        <div class="comment-actions">
+                                                            <% if (isOwner(reply.author)) { %>
+                                                                <button type="button" class="comment-edit" data-comment-id="<%= reply._id %>">Edit</button>
+                                                            <% } %>
+                                                            <% if (isOwner(reply.author) || isBlogAuthor) { %>
+                                                                <form class="delete-form" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/replies/<%= reply._id %>/delete" method="POST">
+                                                                    <button type="submit" class="comment-delete">Delete</button>
+                                                                </form>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         <% }) %>
