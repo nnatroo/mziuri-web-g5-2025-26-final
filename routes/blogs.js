@@ -45,6 +45,12 @@ function uploadThumbnail(req, res, next) {
     });
 }
 
+// Escape user input so it is matched literally inside a RegExp (a stray "(" or
+// "*" from the search box would otherwise break or skew the query).
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Removes a previously uploaded thumbnail file from disk. Only touches files in
 // our uploads dir, so bundled/default thumbnails are never deleted.
 function removeThumbnailFile(thumbnail) {
@@ -74,9 +80,34 @@ function toggleReaction(target, userId, reaction) {
 
 router.get('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
-    const blogs = await Blog.find().sort({date: -1}).populate("author", "email")
 
-    res.render('blogs', {email, blogs});
+    // Optional search across title/description, matched case-insensitively.
+    const search = String(req.query.q || '').trim();
+    let filter = {};
+    if (search) {
+        const term = new RegExp(escapeRegExp(search), 'i');
+        filter = {$or: [{title: term}, {description: term}]};
+    }
+
+    const perPage = 6;
+    const totalBlogs = await Blog.countDocuments(filter);
+    const totalPages = Math.max(1, Math.ceil(totalBlogs / perPage));
+
+    // Clamp the requested page into [1, totalPages] so bad/oob input is harmless.
+    let page = parseInt(req.query.page, 10);
+    if (isNaN(page) || page < 1) {
+        page = 1;
+    } else if (page > totalPages) {
+        page = totalPages;
+    }
+
+    const blogs = await Blog.find(filter)
+        .sort({date: -1})
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .populate("author", "email");
+
+    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {
