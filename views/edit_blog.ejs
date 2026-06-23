@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Blog | Edit Post</title>
+    <link rel="stylesheet" href="/stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/new_blog.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet">
+    <link rel="shortcut icon" href="/images/favicon.svg" type="image/x-icon">
+</head>
+<body>
+
+<%- include('partials/header', { email }); %>
+
+<div class="container new-blog-wrapper">
+    <h2 class="container title">EDIT POST</h2>
+    <% if(error){ %>
+    <p><%= error %></p>
+    <% } %>
+</div>
+
+<form class="container" action="/blogs/<%= blog._id %>/edit" method="POST" enctype="multipart/form-data">
+    <input type="text" name="title" id="title" placeholder="Blog Title" value="<%= blog.title %>" required>
+    <input type="text" name="description" id="description" placeholder="Description" value="<%= blog.description %>" required>
+    <textarea name="content" id="content" placeholder="Message" required><%= blog.content %></textarea>
+    <label class="thumbnail-field" for="thumbnail">
+        <span class="thumbnail-label">Thumbnail image</span>
+        <% if (blog.thumbnail) { %>
+            <img class="current-thumbnail" src="<%= blog.thumbnail %>" alt="Current thumbnail">
+        <% } %>
+        <input type="file" name="thumbnail" id="thumbnail" accept="image/png, image/jpeg, image/webp, image/gif">
+        <span class="thumbnail-hint">Leave empty to keep the current image · PNG, JPG, WEBP or GIF · up to 5MB</span>
+    </label>
+    <button type="submit">Save changes</button>
+</form>
+
+<%- include('partials/footer'); %>
+
+</body>
+</html>

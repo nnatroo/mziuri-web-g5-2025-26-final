@@ -66,3 +66,13 @@ deleteForms.forEach((form) => {
         }
     });
 });
+
+const deleteBlogForms = document.querySelectorAll('.delete-blog-form');
+
+deleteBlogForms.forEach((form) => {
+    form.addEventListener('submit', (event) => {
+        if (!confirm('Delete this post? This cannot be undone.')) {
+            event.preventDefault();
+        }
+    });
+});
