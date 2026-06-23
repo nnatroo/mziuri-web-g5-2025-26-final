@@ -45,6 +45,12 @@ function uploadThumbnail(req, res, next) {
     });
 }
 
+// Escape user input so it is matched literally inside a RegExp (a stray "(" or
+// "*" from the search box would otherwise break or skew the query).
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Toggles a like/dislike on a comment or reply. A user can only have one of
 // the two active at a time, so reacting one way clears the opposite reaction.
 function toggleReaction(target, userId, reaction) {
@@ -67,8 +73,16 @@ function toggleReaction(target, userId, reaction) {
 router.get('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
 
+    // Optional search across title/description, matched case-insensitively.
+    const search = String(req.query.q || '').trim();
+    let filter = {};
+    if (search) {
+        const term = new RegExp(escapeRegExp(search), 'i');
+        filter = {$or: [{title: term}, {description: term}]};
+    }
+
     const perPage = 6;
-    const totalBlogs = await Blog.countDocuments();
+    const totalBlogs = await Blog.countDocuments(filter);
     const totalPages = Math.max(1, Math.ceil(totalBlogs / perPage));
 
     // Clamp the requested page into [1, totalPages] so bad/oob input is harmless.
@@ -79,13 +93,13 @@ router.get('/', requireAuth, async function (req, res, next) {
         page = totalPages;
     }
 
-    const blogs = await Blog.find()
+    const blogs = await Blog.find(filter)
         .sort({date: -1})
         .skip((page - 1) * perPage)
         .limit(perPage)
         .populate("author", "email");
 
-    res.render('blogs', {email, blogs, page, totalPages});
+    res.render('blogs', {email, blogs, page, totalPages, search, totalBlogs});
 });
 
 router.get('/new', requireAuth, function (req, res, next) {
