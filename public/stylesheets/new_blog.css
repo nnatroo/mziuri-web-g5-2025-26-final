@@ -173,3 +173,17 @@ button:hover {
     border-radius: 2px;
     object-fit: cover;
 }
+
+.form-error {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(217, 45, 32, 1);
+}
+
+.form-success {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(34, 139, 34, 1);
+}

@@ -5,24 +5,11 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {requireAuth} = require('../middlewares/authMiddleware');
 
-router.get('/', requireAuth, async function (req, res, next) {
-    const email = req.session.user.email;
-
-    try {
-        const user = await User.findOne({email});
-
-        if (!user) {
-            return next(createError(404));
-        }
-
-        res.render('settings', {email, user, error: null, success: null});
-    } catch (error) {
-        console.log(error);
-        next(createError(500));
-    }
+router.get('/', requireAuth, function (req, res, next) {
+    res.render('change_password', {email: req.session.user.email, error: null, success: null});
 });
 
-router.post('/password', requireAuth, async function (req, res, next) {
+router.post('/', requireAuth, async function (req, res, next) {
     const email = req.session.user.email;
     const {currentPassword, newPassword, confirmPassword} = req.body;
 
@@ -33,7 +20,7 @@ router.post('/password', requireAuth, async function (req, res, next) {
             return next(createError(404));
         }
 
-        const render = (error, success) => res.render('settings', {email, user, error, success});
+        const render = (error, success) => res.render('change_password', {email, error, success});
 
         if (!currentPassword || !newPassword || !confirmPassword) {
             return render('All fields are required', null);
