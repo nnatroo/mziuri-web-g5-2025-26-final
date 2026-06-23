@@ -76,3 +76,30 @@ deleteBlogForms.forEach((form) => {
         }
     });
 });
+
+const copyLinkButtons = document.querySelectorAll('.share-copy');
+
+copyLinkButtons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+        const url = btn.dataset.url;
+
+        const flash = () => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy link'; }, 1500);
+        };
+
+        try {
+            await navigator.clipboard.writeText(url);
+            flash();
+        } catch (e) {
+            // Fallback for browsers without the async clipboard API.
+            const tmp = document.createElement('input');
+            tmp.value = url;
+            document.body.appendChild(tmp);
+            tmp.select();
+            document.execCommand('copy');
+            document.body.removeChild(tmp);
+            flash();
+        }
+    });
+});

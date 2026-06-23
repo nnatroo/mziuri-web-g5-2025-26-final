@@ -42,8 +42,8 @@
 
 <div class="container blog-wrapper">
     <aside class="recent-posts">
-        <h2>Recent blog posts</h2>
-        <% recentBlogPosts.forEach((post, index) => { %>
+        <h2><%= sidebarHeading %></h2>
+        <% sidebarPosts.forEach((post, index) => { %>
             <article class="recent-post-card">
                 <a href="/blogs/<%= post._id %>" class="recent-post-thumb">
                     <img src="<%= post.thumbnail || '/images/thumbnails/thumbnail-' + ((index % 5) + 1) + '.png' %>" alt="<%= post.title %>">
@@ -100,6 +100,16 @@
                         &#128078; <span><%= reactionCount(blog.dislikes) %></span>
                     </button>
                 </form>
+            </div>
+            <div class="blog-share">
+                <span class="blog-share-label">Share</span>
+                <a class="share-btn" target="_blank" rel="noopener"
+                   href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(postUrl) %>&amp;text=<%= encodeURIComponent(blog.title) %>">X</a>
+                <a class="share-btn" target="_blank" rel="noopener"
+                   href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(postUrl) %>">Facebook</a>
+                <a class="share-btn" target="_blank" rel="noopener"
+                   href="https://www.linkedin.com/sharing/share-offsite/?url=<%= encodeURIComponent(postUrl) %>">LinkedIn</a>
+                <button class="share-btn share-copy" type="button" data-url="<%= postUrl %>">Copy link</button>
             </div>
         </article>
 

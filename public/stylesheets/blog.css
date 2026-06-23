@@ -692,3 +692,42 @@
 .author-link:hover {
     text-decoration: underline;
 }
+
+/* ---------- Share ---------- */
+
+.blog-share {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.blog-share-label {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(26, 26, 26, 1);
+    margin-right: 4px;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: 1px solid rgba(234, 236, 240, 1);
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(102, 112, 133, 1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.share-btn:hover {
+    border-color: rgba(105, 65, 198, 1);
+    color: rgba(105, 65, 198, 1);
+}

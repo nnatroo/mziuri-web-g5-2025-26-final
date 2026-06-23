@@ -154,16 +154,35 @@ router.get('/:blogId', requireAuth, async function (req, res, next) {
             return next(createError(404));
         }
 
-        const recentBlogPosts = await Blog.find({_id: {$ne: blogId}})
+        const authorName = blog.author.username && blog.author.username.trim()
+            ? blog.author.username
+            : blog.author.email.split('@')[0];
+
+        // Prefer "more from this author"; fall back to recent posts when the
+        // author has nothing else published.
+        const relatedPosts = await Blog.find({author: blog.author._id, _id: {$ne: blogId}})
             .sort({date: -1})
             .limit(8)
-            .populate("author", "email");
+            .populate("author", "email username");
+
+        let sidebarPosts = relatedPosts;
+        let sidebarHeading = `More from ${authorName}`;
+
+        if (relatedPosts.length === 0) {
+            sidebarPosts = await Blog.find({_id: {$ne: blogId}})
+                .sort({date: -1})
+                .limit(8)
+                .populate("author", "email username");
+            sidebarHeading = 'Recent blog posts';
+        }
 
         const user = await User.findOne({email});
         const userId = user ? user._id.toString() : null;
         const isBookmarked = !!(user && user.bookmarks.some((id) => id.equals(blogId)));
 
-        res.render("blog", {email, blog, recentBlogPosts, userId, isBookmarked});
+        const postUrl = `${req.protocol}://${req.get('host')}/blogs/${blogId}`;
+
+        res.render("blog", {email, blog, sidebarPosts, sidebarHeading, userId, isBookmarked, postUrl});
     } catch (error) {
         return next(createError(404));
     }
