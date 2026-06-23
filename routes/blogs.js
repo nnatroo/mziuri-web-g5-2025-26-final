@@ -139,7 +139,13 @@ router.get('/:blogId', requireAuth, async function (req, res, next) {
     const blogId = req.params.blogId
 
     try {
-        const blog = await Blog.findById(blogId)
+        // Count this visit; $inc + {new: true} returns the updated document so
+        // the viewer sees their own view included.
+        const blog = await Blog.findByIdAndUpdate(
+            blogId,
+            {$inc: {views: 1}},
+            {new: true}
+        )
             .populate("author", "email username avatar")
             .populate("comments.author", "email username")
             .populate("comments.replies.author", "email username");
