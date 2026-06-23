@@ -21,7 +21,18 @@
 
     <h1 class="title">THE BLOG</h1>
 
-    <% if (page === 1 && blogs.length >= 4) { %>
+    <% const pageHref = (p) => '/blogs?page=' + p + (search ? '&q=' + encodeURIComponent(search) : ''); %>
+
+    <form class="blog-search" action="/blogs" method="GET" role="search">
+        <input type="search" name="q" value="<%= search %>"
+               placeholder="Search posts by title or description...">
+        <button type="submit">Search</button>
+        <% if (search) { %>
+            <a class="blog-search-clear" href="/blogs">Clear</a>
+        <% } %>
+    </form>
+
+    <% if (page === 1 && !search && blogs.length >= 4) { %>
     <section class="recent-blogs-wrapper">
         <h2>Recent blog posts</h2>
 
@@ -106,47 +117,58 @@
     <% } %>
 
     <section class="all-blogs-posts-wrapper">
-        <h4>All blog posts</h4>
-        <div class="blogs-grid">
-            <% blogs.forEach((blog) => {%>
-                <div class="blog-card">
-                    <figure>
-                        <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
-                    </figure>
-                    <div>
-                        <p class="meta"><%= blog.author.email %>> • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+        <% if (search) { %>
+            <h4>Results for “<%= search %>” (<%= totalBlogs %>)</h4>
+        <% } else { %>
+            <h4>All blog posts</h4>
+        <% } %>
+
+        <% if (blogs.length === 0) { %>
+            <p class="no-results">
+                No posts found<% if (search) { %> for “<%= search %>”<% } %>.
+            </p>
+        <% } else { %>
+            <div class="blogs-grid">
+                <% blogs.forEach((blog) => {%>
+                    <div class="blog-card">
+                        <figure>
+                            <img src="<%= blog.thumbnail || '/images/thumbnails/thumbnail-5.png' %>" alt="<%= blog.title %>">
+                        </figure>
+                        <div>
+                            <p class="meta"><%= blog.author.email %>> • <%= blog.date.getDate() %> <%= blog.date.toLocaleString('default', {month: 'short'}) %> <%= blog.date.getFullYear() %></p>
+                        </div>
+                        <a href="/blogs/<%= blog._id %>">
+                            <span><%= blog.title %></span>
+                            <img src="/images/arrow-icon.svg" alt="Arrow icon">
+                        </a>
+                        <p class="description"><%= blog.description %></p>
                     </div>
-                    <a href="/blogs/<%= blog._id %>">
-                        <span><%= blog.title %></span>
-                        <img src="/images/arrow-icon.svg" alt="Arrow icon">
-                    </a>
-                    <p class="description"><%= blog.description %></p>
-                </div>
-            <% }) %>
-        </div>
+                <% }) %>
+            </div>
 
-        <% if (totalPages > 1) { %>
-            <nav class="pagination" aria-label="Blog pages">
-                <% if (page > 1) { %>
-                    <a class="pagination-arrow" href="/blogs?page=<%= page - 1 %>">Previous</a>
-                <% } else { %>
-                    <span class="pagination-arrow disabled">Previous</span>
-                <% } %>
-
-                <% for (let p = 1; p <= totalPages; p++) { %>
-                    <% if (p === page) { %>
-                        <span class="pagination-page active"><%= p %></span>
+            <% if (totalPages > 1) { %>
+                <nav class="pagination" aria-label="Blog pages">
+                    <% if (page > 1) { %>
+                        <a class="pagination-arrow" href="<%= pageHref(page - 1) %>">Previous</a>
                     <% } else { %>
-                        <a class="pagination-page" href="/blogs?page=<%= p %>"><%= p %></a>
+                        <span class="pagination-arrow disabled">Previous</span>
                     <% } %>
-                <% } %>
 
-                <% if (page < totalPages) { %>
-                    <a class="pagination-arrow" href="/blogs?page=<%= page + 1 %>">Next</a>
-                <% } else { %>
-                    <span class="pagination-arrow disabled">Next</span>
-                <% } %>
-            </nav>
+                    <% for (let p = 1; p <= totalPages; p++) { %>
+                        <% if (p === page) { %>
+                            <span class="pagination-page active"><%= p %></span>
+                        <% } else { %>
+                            <a class="pagination-page" href="<%= pageHref(p) %>"><%= p %></a>
+                        <% } %>
+                    <% } %>
+
+                    <% if (page < totalPages) { %>
+                        <a class="pagination-arrow" href="<%= pageHref(page + 1) %>">Next</a>
+                    <% } else { %>
+                        <span class="pagination-arrow disabled">Next</span>
+                    <% } %>
+                </nav>
+            <% } %>
         <% } %>
     </section>
 </div>

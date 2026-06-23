@@ -242,3 +242,65 @@
     border-color: rgba(0, 0, 0, 0.06);
     cursor: not-allowed;
 }
+
+.blog-search {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.blog-search input {
+    flex: 1;
+    min-width: 240px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(26, 26, 26, 1);
+    outline: none;
+}
+
+.blog-search input:focus {
+    border-color: rgba(105, 65, 198, 1);
+}
+
+.blog-search button {
+    background-color: rgba(105, 65, 198, 1);
+    color: #ffffff;
+    border: 1px solid rgba(105, 65, 198, 1);
+    border-radius: 8px;
+    padding: 14px 28px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.blog-search button:hover {
+    background-color: rgba(83, 56, 158, 1);
+    border-color: rgba(83, 56, 158, 1);
+}
+
+.blog-search-clear {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(102, 112, 133, 1);
+}
+
+.blog-search-clear:hover {
+    color: rgba(105, 65, 198, 1);
+    text-decoration: underline;
+}
+
+.no-results {
+    margin-top: 32px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(102, 112, 133, 1);
+}
