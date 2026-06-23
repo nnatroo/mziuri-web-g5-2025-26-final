@@ -24,7 +24,11 @@
     const formatShortDate = (d) => new Date(d).toLocaleDateString('en-US', {
         month: 'short', day: 'numeric', year: 'numeric'
     });
-    const displayName = (user) => user && user.email ? user.email.split('@')[0] : 'Unknown';
+    const displayName = (user) => {
+        if (!user) return 'Unknown';
+        if (user.username && user.username.trim()) return user.username;
+        return user.email ? user.email.split('@')[0] : 'Unknown';
+    };
     const initial = (user) => displayName(user).charAt(0).toUpperCase();
     const reactionCount = (reactions) => reactions ? reactions.length : 0;
     const hasReacted = (reactions) => !!(userId && reactions && reactions.some((r) => String(r.author) === userId));
@@ -53,7 +57,8 @@
     <main class="blog-main">
         <article class="blog-article">
             <div class="meta">
-                <span><%= blog.author.email %></span> • <span> <%= blog.date.getDate() %> </span>
+                <a class="author-link" href="/users/<%= blog.author._id %>"><%= displayName(blog.author) %></a>
+                • <span> <%= blog.date.getDate() %> </span>
                 <span> <%= blog.date.toLocaleString('default', {month: 'short'}) %> </span>
                 <span> <%= blog.date.getFullYear() %> </span>
             </div>
@@ -121,7 +126,13 @@
                             <div class="comment-body">
                                 <div class="comment-head">
                                     <div>
-                                        <p class="comment-author"><%= displayName(comment.author) %></p>
+                                        <p class="comment-author">
+                                            <% if (comment.author) { %>
+                                                <a class="author-link" href="/users/<%= comment.author._id %>"><%= displayName(comment.author) %></a>
+                                            <% } else { %>
+                                                <%= displayName(comment.author) %>
+                                            <% } %>
+                                        </p>
                                         <p class="comment-date">
                                             <%= formatShortDate(comment.date) %>
                                             <% if (comment.editedAt) { %>
@@ -184,7 +195,13 @@
                                                 <div class="comment-body">
                                                     <div class="comment-head">
                                                         <div>
-                                                            <p class="comment-author"><%= displayName(reply.author) %></p>
+                                                            <p class="comment-author">
+                                                                <% if (reply.author) { %>
+                                                                    <a class="author-link" href="/users/<%= reply.author._id %>"><%= displayName(reply.author) %></a>
+                                                                <% } else { %>
+                                                                    <%= displayName(reply.author) %>
+                                                                <% } %>
+                                                            </p>
                                                             <p class="comment-date"><%= formatShortDate(reply.date) %></p>
                                                         </div>
                                                         <div class="reactions">

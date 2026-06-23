@@ -681,3 +681,14 @@
     gap: 12px;
     align-items: center;
 }
+
+/* ---------- Author links ---------- */
+
+.author-link {
+    font-weight: 600;
+    color: rgba(105, 65, 198, 1);
+}
+
+.author-link:hover {
+    text-decoration: underline;
+}

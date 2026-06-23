@@ -1,0 +1,92 @@
+.profile-header {
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.profile-avatar {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: rgba(105, 65, 198, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-avatar span {
+    font-weight: 700;
+    font-size: 48px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-name {
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 48px;
+    color: rgba(26, 26, 26, 1);
+}
+
+.profile-email {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(105, 65, 198, 1);
+}
+
+.profile-bio {
+    margin-top: 6px;
+    max-width: 640px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(102, 112, 133, 1);
+}
+
+.profile-postcount {
+    margin-top: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(102, 112, 133, 1);
+}
+
+.profile-edit-link {
+    margin-top: 12px;
+    align-self: flex-start;
+    border: 1px solid rgba(105, 65, 198, 1);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(105, 65, 198, 1);
+    transition: all 0.2s;
+}
+
+.profile-edit-link:hover {
+    background-color: rgba(105, 65, 198, 0.08);
+}
+
+@media (max-width: 576px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

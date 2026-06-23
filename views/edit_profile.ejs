@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Blog | Edit Profile</title>
+    <link rel="stylesheet" href="/stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/new_blog.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet">
+    <link rel="shortcut icon" href="/images/favicon.svg" type="image/x-icon">
+</head>
+<body>
+
+<%- include('partials/header', { email }); %>
+
+<div class="container new-blog-wrapper">
+    <h2 class="container title">PROFILE</h2>
+    <% if(error){ %>
+    <p><%= error %></p>
+    <% } %>
+</div>
+
+<form class="container" action="/users/<%= profileUser._id %>/edit" method="POST" enctype="multipart/form-data">
+    <input type="text" name="username" id="username" placeholder="Username" value="<%= profileUser.username || '' %>" maxlength="30">
+    <textarea name="bio" id="bio" placeholder="Bio" maxlength="300"><%= profileUser.bio || '' %></textarea>
+    <label class="thumbnail-field" for="avatar">
+        <span class="thumbnail-label">Avatar</span>
+        <% if (profileUser.avatar) { %>
+            <img class="current-thumbnail" src="<%= profileUser.avatar %>" alt="Current avatar">
+        <% } %>
+        <input type="file" name="avatar" id="avatar" accept="image/png, image/jpeg, image/webp, image/gif">
+        <span class="thumbnail-hint">Optional · PNG, JPG, WEBP or GIF · up to 5MB</span>
+    </label>
+    <button type="submit">Save profile</button>
+</form>
+
+<%- include('partials/footer'); %>
+
+</body>
+</html>
